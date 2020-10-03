@@ -5,8 +5,10 @@ namespace vsf
 {
     struct VideoConfig;
     struct Config;
-    struct UpdateHooks;
 
+    struct UpdateTime;
+    struct UpdateHooks;
+    
     namespace application 
     {
         bool initialise(const Config& config);
@@ -27,8 +29,15 @@ namespace vsf
         VideoConfig video{};
     };
 
+    struct UpdateTime
+    {
+        int update_count;
+        float time;
+        float delta_time;
+    };
+
     struct UpdateHooks 
     {
-        void (*update)();
+        void (*update)(const UpdateTime&);
     };
 }

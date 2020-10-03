@@ -142,13 +142,23 @@ namespace vsf
     void platform::run(UpdateHooks hooks) 
     {
         auto is_running = true;
+        UpdateTime time{0};
+
         while (is_running)
         {
+            static int start_ticks = SDL_GetTicks();
+            int ticks = SDL_GetTicks();
+            time.update_count++;
+            time.time = ticks / 1000.0f;
+            time.delta_time = (ticks - start_ticks) / 1000.0f;
+            start_ticks = ticks;
+
             poll_and_handle_events(is_running);
+
             if (is_running)
             {
                 render_begin(renderer);
-                hooks.update();
+                hooks.update(time);
                 render_present(renderer);
             }
         }

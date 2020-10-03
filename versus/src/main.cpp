@@ -2,8 +2,9 @@
 
 namespace 
 {
-    void update() 
+    void update(const vsf::UpdateTime& time)
     {
+        LOG_INFO("Frame count: %i, Seconds: %f, Delta Time: %f", time.update_count, time.time, time.delta_time);
     }
 }
 
