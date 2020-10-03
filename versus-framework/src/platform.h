@@ -1,5 +1,8 @@
 #pragma once
 #include "application.h"
+#include "graphics.h"
+#include <memory>
+#include <string>
 
 namespace vsf 
 {
@@ -10,5 +13,7 @@ namespace vsf
         bool initialise(const Config& config);
         void run(UpdateHooks hooks);
         void shutdown();
+
+        std::unique_ptr<ITexture> load_texture(const std::string& path);
     }
 }

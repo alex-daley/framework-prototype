@@ -1,5 +1,6 @@
 #include "platform.h"
 #include "debug.h"
+#include "stb/stb_image.h"
 #include <SDL.h>
 
 namespace
@@ -8,13 +9,26 @@ namespace
     SDL_Window* window;
     SDL_Renderer* renderer;
 
+    class TextureImplSDL final : public vsf::ITexture
+    {
+    public:
+        TextureImplSDL(SDL_Texture* sdl_texture, int width, int height);
+        ~TextureImplSDL();
+
+        vsf::Resolution get_resolution() const override;
+
+        SDL_Texture* sdl_texture;
+
+    private:
+        vsf::Resolution resolution;
+    };
+
     void log_sdl_version()
     {
         SDL_version version;
         SDL_GetVersion(&version);
         LOG_INFO("SDL version = %i.%i.%i", version.major, version.minor, version.patch);
     }
-
 
     bool initialise_sdl()
     {
@@ -71,7 +85,6 @@ namespace
         }
     }
 
-
     SDL_Renderer* create_renderer(SDL_Window* window, bool use_vsync)
     {
         constexpr int FIRST_VIABLE_DRIVER = -1;
@@ -109,6 +122,64 @@ namespace
     void render_present(SDL_Renderer* renderer)
     {
         SDL_RenderPresent(renderer);
+    }
+
+    SDL_Texture* load_texture(const char* path, SDL_Renderer* renderer)
+    {
+        int width, height, channels;
+        unsigned char* data = stbi_load(path, &width, &height, &channels, STBI_rgb_alpha);
+        if (!data)
+        {
+            LOG_ERROR("Failed to load image data: %s", stbi_failure_reason());
+            return nullptr;
+        }
+
+        constexpr int DEPTH = 32;
+        int pitch = width * 4;
+        SDL_Surface* surface = SDL_CreateRGBSurfaceWithFormatFrom((void*)data, width, height, DEPTH, pitch, SDL_PIXELFORMAT_RGBA32);
+        if (!surface)
+        {
+            LOG_ERROR("Failed to create surface: %s", SDL_GetError());
+            stbi_image_free(data);
+            return nullptr;
+        }
+
+        SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
+        if (!texture)
+        {
+            LOG_ERROR("Failed to create texture: %s", SDL_GetError());
+            SDL_FreeSurface(surface);
+            stbi_image_free(data);
+            return nullptr;
+        }
+
+        SDL_FreeSurface(surface);
+        stbi_image_free(data);
+        LOG_INFO("Loaded texture %p from %s", texture, path);
+
+        return texture;
+    }
+
+    void free_sdl_texture(SDL_Texture* texture)
+    {
+        SDL_DestroyTexture(texture);
+        LOG_INFO("Destroyed texture %p", texture);
+    }
+
+    TextureImplSDL::TextureImplSDL(SDL_Texture* sdl_texture, int width, int height) :
+        sdl_texture(sdl_texture),
+        resolution({ width, height })
+    {
+    }
+
+    TextureImplSDL::~TextureImplSDL()
+    {
+        free_sdl_texture(sdl_texture);
+    }
+
+    vsf::Resolution TextureImplSDL::get_resolution() const
+    {
+        return resolution;
     }
 }
 
@@ -169,5 +240,10 @@ namespace vsf
         free_renderer(renderer);
         free_window(window);
         shutdown_sdl();
+    }
+
+    std::unique_ptr<ITexture> platform::load_texture(const std::string& path)
+    {
+        return std::unique_ptr<ITexture>();
     }
 }

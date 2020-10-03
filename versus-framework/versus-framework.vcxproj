@@ -96,7 +96,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SDL2_INCLUDE)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SDL2_INCLUDE);$(ProjectDir)vendor\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -115,7 +115,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SDL2_INCLUDE)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SDL2_INCLUDE);$(ProjectDir)vendor\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -134,7 +134,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SDL2_INCLUDE)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SDL2_INCLUDE);$(ProjectDir)vendor\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -153,7 +153,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SDL2_INCLUDE)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SDL2_INCLUDE);$(ProjectDir)vendor\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -170,12 +170,15 @@
     <ClInclude Include="include\vsf.h" />
     <ClInclude Include="src\application.h" />
     <ClInclude Include="src\debug.h" />
+    <ClInclude Include="src\graphics.h" />
     <ClInclude Include="src\maths.h" />
     <ClInclude Include="src\platform.h" />
+    <ClInclude Include="vendor\stb\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\application.cpp" />
     <ClCompile Include="src\debug.cpp" />
+    <ClCompile Include="src\graphics.cpp" />
     <ClCompile Include="src\maths.cpp" />
     <ClCompile Include="src\platform_sdl.cpp" />
   </ItemGroup>
