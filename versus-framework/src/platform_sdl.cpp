@@ -1,4 +1,5 @@
 #include "platform.h"
+#include "debug.h"
 #include <SDL.h>
 
 namespace
@@ -11,7 +12,7 @@ namespace
     {
         SDL_version version;
         SDL_GetVersion(&version);
-        SDL_Log("SDL version = %i.%i.%i", version.major, version.minor, version.patch);
+        LOG_INFO("SDL version = %i.%i.%i", version.major, version.minor, version.patch);
     }
 
 
@@ -19,11 +20,11 @@ namespace
     {
         if (SDL_Init(INIT_FLAGS) != 0)
         {
-            SDL_Log("Failed to initialise SDL: %s", SDL_GetError());
+            LOG_ERROR("Failed to initialise SDL: %s", SDL_GetError());
             return false;
         }
 
-        SDL_Log("Initialised SDL");
+        LOG_INFO("Initialised SDL");
         log_sdl_version();
 
         return true;
@@ -32,7 +33,7 @@ namespace
     void shutdown_sdl()
     {
         SDL_Quit();
-        SDL_Log("Shutdown SDL");
+        LOG_INFO("Shutdown SDL");
     }
 
     SDL_Window* create_window(const char* title, int width, int height)
@@ -43,18 +44,18 @@ namespace
         SDL_Window* window = SDL_CreateWindow(title, CENTRE, CENTRE, width, height, WINDOW_FLAGS);
         if (!window)
         {
-            SDL_Log("Failed to create window: %s", SDL_GetError());
+            LOG_ERROR("Failed to create window: %s", SDL_GetError());
             return nullptr;
         }
 
-        SDL_Log("Created window %p", window);
+        LOG_INFO("Created window %p", window);
         return window;
     }
 
     void free_window(SDL_Window* window)
     {
         SDL_DestroyWindow(window);
-        SDL_Log("Destoryed window %p", window);
+        LOG_INFO("Destoryed window %p", window);
     }
 
     void poll_and_handle_events(bool& is_running)
@@ -64,7 +65,7 @@ namespace
         {
             if (event.type == SDL_QUIT)
             {
-                SDL_Log("SDL quit event received");
+                LOG_INFO("SDL quit event received");
                 is_running = false;
             }
         }
@@ -84,18 +85,18 @@ namespace
         SDL_Renderer* renderer = SDL_CreateRenderer(window, FIRST_VIABLE_DRIVER, flags);
         if (!renderer)
         {
-            SDL_Log("Failed to create renderer: %s", SDL_GetError());
+            LOG_ERROR("Failed to create renderer: %s", SDL_GetError());
             return nullptr;
         }
 
-        SDL_Log("Created renderer %p with window %p", renderer, window);
+        LOG_INFO("Created renderer %p with window %p", renderer, window);
         return renderer;
     }
 
     void free_renderer(SDL_Renderer* renderer)
     {
         SDL_DestroyRenderer(renderer);
-        SDL_Log("Destroyed renderer %p and associated textures", renderer);
+        LOG_INFO("Destroyed renderer %p and associated textures", renderer);
     }
 
     void render_begin(SDL_Renderer* renderer)
