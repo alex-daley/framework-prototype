@@ -5,6 +5,7 @@ namespace
 {
     constexpr Uint32 INIT_FLAGS = SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_GAMECONTROLLER;
     SDL_Window* window;
+    SDL_Renderer* renderer;
 
     void log_sdl_version()
     {
@@ -68,6 +69,46 @@ namespace
             }
         }
     }
+
+
+    SDL_Renderer* create_renderer(SDL_Window* window, bool use_vsync)
+    {
+        constexpr int FIRST_VIABLE_DRIVER = -1;
+        
+        Uint32 flags = SDL_RENDERER_ACCELERATED;
+        if (use_vsync)
+        {
+            flags |= SDL_RENDERER_PRESENTVSYNC;
+        }
+
+        SDL_Renderer* renderer = SDL_CreateRenderer(window, FIRST_VIABLE_DRIVER, flags);
+        if (!renderer)
+        {
+            SDL_Log("Failed to create renderer: %s", SDL_GetError());
+            return nullptr;
+        }
+
+        SDL_Log("Created renderer %p with window %p", renderer, window);
+        return renderer;
+    }
+
+    void free_renderer(SDL_Renderer* renderer)
+    {
+        SDL_DestroyRenderer(renderer);
+        SDL_Log("Destroyed renderer %p and associated textures", renderer);
+    }
+
+    void render_begin(SDL_Renderer* renderer)
+    {
+        // Cornflower blue.
+        SDL_SetRenderDrawColor(renderer, 100, 149, 237, 255);
+        SDL_RenderClear(renderer);
+    }
+
+    void render_present(SDL_Renderer* renderer)
+    {
+        SDL_RenderPresent(renderer);
+    }
 }
 
 namespace vsf 
@@ -86,6 +127,14 @@ namespace vsf
             return false;
         }
 
+        renderer = create_renderer(window, config.video.use_vsync);
+        if (!renderer)
+        {
+            free_window(window);
+            shutdown_sdl();
+            return false;
+        }
+
         return true;
     }
 
@@ -97,13 +146,16 @@ namespace vsf
             poll_and_handle_events(is_running);
             if (is_running)
             {
+                render_begin(renderer);
                 hooks.update();
+                render_present(renderer);
             }
         }
     }
 
     void platform::shutdown() 
     {
+        free_renderer(renderer);
         free_window(window);
         shutdown_sdl();
     }

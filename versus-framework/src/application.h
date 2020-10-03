@@ -18,6 +18,7 @@ namespace vsf
     {
         int resolution_x;
         int resolution_y;
+        bool use_vsync;
     };
 
     struct Config 

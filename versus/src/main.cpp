@@ -12,6 +12,7 @@ int main()
     vsf::Config config;
     config.video.resolution_x = 1280;
     config.video.resolution_y = 720;
+    config.video.use_vsync = true;
 
     if (!vsf::application::initialise(config)) 
     {
