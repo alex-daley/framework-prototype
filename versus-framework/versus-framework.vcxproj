@@ -169,6 +169,7 @@
   <ItemGroup>
     <ClInclude Include="include\vsf.h" />
     <ClInclude Include="src\application.h" />
+    <ClInclude Include="src\asset_manager.h" />
     <ClInclude Include="src\debug.h" />
     <ClInclude Include="src\graphics.h" />
     <ClInclude Include="src\maths.h" />
@@ -177,6 +178,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\application.cpp" />
+    <ClCompile Include="src\asset_manager.cpp" />
     <ClCompile Include="src\debug.cpp" />
     <ClCompile Include="src\graphics.cpp" />
     <ClCompile Include="src\maths.cpp" />

@@ -1,5 +1,6 @@
 #include "platform.h"
 #include "debug.h"
+#include "graphics.h"
 #include "stb/stb_image.h"
 #include <SDL.h>
 

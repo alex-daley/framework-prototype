@@ -1,10 +1,10 @@
 #include "vsf.h"
+#include <memory>
 
 namespace 
 {
     void update(const vsf::UpdateTime& time)
     {
-        LOG_INFO("Frame count: %i, Seconds: %f, Delta Time: %f", time.update_count, time.time, time.delta_time);
     }
 }
 
@@ -20,10 +20,14 @@ int main()
         return -1;
     }
 
+    auto asset_manager = std::make_unique<vsf::AssetManager>();
+    auto& texture = asset_manager->get_texture("images/player-placeholder.png");
+
     vsf::UpdateHooks hooks;
     hooks.update = update;
     vsf::application::run(hooks);
 
+    asset_manager.reset();
     vsf::application::shutdown();
 
     return 0;

@@ -105,7 +105,8 @@
       <AdditionalLibraryDirectories>$(SolutionDir)versus-framework\bin\$(Platform.ToLower())\$(Configuration.ToLower())\</AdditionalLibraryDirectories>
     </Link>
     <PreBuildEvent>
-      <Command>xcopy /y /d  "$(SDL2_LIB32)\SDL2.dll" "$(TargetDir)"</Command>
+      <Command>xcopy /y /d  "$(SDL2_LIB32)\SDL2.dll" "$(TargetDir)"
+xcopy /y /d /s "$(ProjectDir)assets\out" "$(TargetDir)"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -127,7 +128,8 @@
       <AdditionalLibraryDirectories>$(SolutionDir)versus-framework\bin\$(Platform.ToLower())\$(Configuration.ToLower())\</AdditionalLibraryDirectories>
     </Link>
     <PreBuildEvent>
-      <Command>xcopy /y /d  "$(SDL2_LIB32)\SDL2.dll" "$(TargetDir)"</Command>
+      <Command>xcopy /y /d  "$(SDL2_LIB32)\SDL2.dll" "$(TargetDir)"
+xcopy /y /d /s "$(ProjectDir)assets\out" "$(TargetDir)"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
