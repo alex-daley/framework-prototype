@@ -166,6 +166,15 @@ namespace
         LOG_INFO("Destroyed texture %p", texture);
     }
 
+
+    SDL_Point get_texture_size(SDL_Texture* texture)
+    {
+        int width = 0;
+        int height = 0;
+        SDL_QueryTexture(texture, nullptr, nullptr, &width, &height);
+        return { width, height };
+    }
+
     TextureImplSDL::TextureImplSDL(SDL_Texture* sdl_texture, int width, int height) :
         sdl_texture(sdl_texture),
         resolution({ width, height })
@@ -244,6 +253,8 @@ namespace vsf
 
     std::unique_ptr<ITexture> platform::load_texture(const std::string& path)
     {
-        return std::unique_ptr<ITexture>();
+        SDL_Texture* sdl_texture = ::load_texture(path.c_str(), renderer);
+        SDL_Point size = get_texture_size(sdl_texture);
+        return std::make_unique<TextureImplSDL>(sdl_texture, size.x, size.y);
     }
 }
