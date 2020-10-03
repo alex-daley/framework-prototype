@@ -25,4 +25,12 @@ namespace vsf
     {
         return max_y - min_y;
     }
+
+    Vector2::Vector2(float x, float y) : x(x), y(y)
+    {
+    }
+
+    Vector2::Vector2() : Vector2(0.0f, 0.0f)
+    {
+    }
 }

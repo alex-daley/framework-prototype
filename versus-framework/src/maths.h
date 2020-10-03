@@ -15,4 +15,13 @@ namespace vsf
         float max_x;
         float max_y;
     };
+
+    struct Vector2
+    {
+        Vector2(float x, float y);
+        Vector2();
+
+        float x;
+        float y;
+    };
 }
