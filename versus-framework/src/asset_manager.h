@@ -17,7 +17,14 @@ namespace vsf
     {
     public:
         // Lazy loads a texture by name.
-        ITexture& get_texture(const std::string& name);
+        ITexture& load_texture(const std::string& name);
+
+        // Preload assets from a specific folder.
+        void preload(const std::string& folder);
+
+        // Preload assets.
+        void preload();
+
 
     private:
         TextureMap textures;

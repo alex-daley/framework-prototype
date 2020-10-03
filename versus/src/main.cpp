@@ -21,8 +21,8 @@ int main()
     }
 
     auto asset_manager = std::make_unique<vsf::AssetManager>();
-    auto& texture = asset_manager->get_texture("images/player-placeholder.png");
-
+    asset_manager->preload();
+    
     vsf::UpdateHooks hooks;
     hooks.update = update;
     vsf::application::run(hooks);
