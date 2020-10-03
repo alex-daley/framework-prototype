@@ -169,9 +169,11 @@
   <ItemGroup>
     <ClInclude Include="include\vsf.h" />
     <ClInclude Include="src\application.h" />
+    <ClInclude Include="src\platform.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\application.cpp" />
+    <ClCompile Include="src\platform_sdl.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

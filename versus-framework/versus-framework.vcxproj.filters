@@ -21,9 +21,15 @@
     <ClInclude Include="src\application.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\platform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\application.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\platform_sdl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
