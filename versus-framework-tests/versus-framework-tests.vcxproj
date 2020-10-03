@@ -172,6 +172,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\maths_tests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\versus-framework\versus-framework.vcxproj">
