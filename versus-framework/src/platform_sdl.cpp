@@ -100,13 +100,29 @@ namespace
         LOG_INFO("Opened %s %p (id: %i)", name, controller, id);
     }
 
-    void remove_controller(ControllerMap& controllers, SDL_JoystickID id)
+    void close_controller(SDL_JoystickID id)
     {
         SDL_GameController* controller = controllers[id];
         const char* name = SDL_GameControllerName(controller);
         SDL_GameControllerClose(controller);
-        controllers.erase(id);
         LOG_INFO("Closed %s %p (id: %i)", name, controller, id);
+    }
+
+    void remove_controller(ControllerMap& controllers, SDL_JoystickID id)
+    {
+        close_controller(id);
+        controllers.erase(id);
+    }
+
+    void free_controllers(ControllerMap& controllers)
+    {
+        for (auto& entry : controllers)
+        {
+            SDL_JoystickID id = entry.first;
+            close_controller(id);
+        }
+
+        controllers.clear();
     }
 
     void handle_event(bool& is_running, const SDL_Event& event)
@@ -226,7 +242,6 @@ namespace
         LOG_INFO("Destroyed texture %p", texture);
     }
 
-
     SDL_Point get_texture_size(SDL_Texture* texture)
     {
         int width = 0;
@@ -306,6 +321,7 @@ namespace vsf
 
     void platform::shutdown() 
     {
+        free_controllers(controllers);
         free_renderer(renderer);
         free_window(window);
         shutdown_sdl();
