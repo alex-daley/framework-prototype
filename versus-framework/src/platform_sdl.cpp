@@ -3,12 +3,18 @@
 #include "graphics.h"
 #include "stb/stb_image.h"
 #include <SDL.h>
+#include <unordered_map>
 
 namespace
 {
+
     constexpr Uint32 INIT_FLAGS = SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_GAMECONTROLLER;
     SDL_Window* window;
     SDL_Renderer* renderer;
+    
+    typedef std::unordered_map<SDL_JoystickID, SDL_GameController*> ControllerMap;
+    constexpr int MAX_CONTROLERS = 8;
+    ControllerMap controllers(MAX_CONTROLERS);
 
     class TextureImplSDL final : public vsf::ITexture
     {
@@ -73,16 +79,69 @@ namespace
         LOG_INFO("Destoryed window %p", window);
     }
 
+    SDL_JoystickID get_controller_id(SDL_GameController* sdl_controller)
+    {
+        SDL_Joystick* joystick = SDL_GameControllerGetJoystick(sdl_controller);
+        return SDL_JoystickInstanceID(joystick);
+    }
+
+    void add_controller(ControllerMap& controllers, int index)
+    {
+        SDL_GameController* controller = SDL_GameControllerOpen(index);
+        if (!controller)
+        {
+            LOG_ERROR("Failed to open controller at index %i: %s", index, SDL_GetError());
+            return;
+        }
+
+        SDL_JoystickID id = get_controller_id(controller);
+        const char* name = SDL_GameControllerName(controller);
+        controllers[id] = controller;
+        LOG_INFO("Opened %s %p (id: %i)", name, controller, id);
+    }
+
+    void remove_controller(ControllerMap& controllers, SDL_JoystickID id)
+    {
+        SDL_GameController* controller = controllers[id];
+        const char* name = SDL_GameControllerName(controller);
+        SDL_GameControllerClose(controller);
+        controllers.erase(id);
+        LOG_INFO("Closed %s %p (id: %i)", name, controller, id);
+    }
+
+    void handle_event(bool& is_running, const SDL_Event& event)
+    {
+        switch (event.type)
+        {
+            case SDL_QUIT:
+            {
+                LOG_INFO("SDL quit event received");
+                is_running = false;
+                break;
+            }
+            case SDL_CONTROLLERDEVICEADDED:
+            {
+                auto index = static_cast<int>(event.cdevice.which);
+                add_controller(controllers, index);
+                break;
+            }
+            case SDL_CONTROLLERDEVICEREMOVED:
+            {
+                // `event.cdevice.which` refers to a device index on add events,
+                // but a device ID on all subsequent controller events.
+                auto id = static_cast<SDL_JoystickID>(event.cdevice.which);
+                remove_controller(controllers, id);
+                break;
+            }
+        }
+    }
+
     void poll_and_handle_events(bool& is_running)
     {
         SDL_Event event;
         while (SDL_PollEvent(&event))
         {
-            if (event.type == SDL_QUIT)
-            {
-                LOG_INFO("SDL quit event received");
-                is_running = false;
-            }
+            handle_event(is_running, event);
         }
     }
 
