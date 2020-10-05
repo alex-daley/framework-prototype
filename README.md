@@ -20,7 +20,7 @@ The Visual Studio solution expects the following enviroment variables
 
 - `SDL2_LIB64` - Same as above but for the 64 bit libraries
 
--`YAMLCPP_INCLUDE` - yaml-cpp include folder path
+- `YAMLCPP_INCLUDE` - yaml-cpp include folder path
 
 - `YAMLCPP_LIB32` - yaml-cpp library folder path (`yaml-cpp.lib`, `yaml-cppd.lib`) 
 
