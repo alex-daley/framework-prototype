@@ -96,13 +96,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)versus-framework\include\;$(ProjectDir)vendor\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)versus-framework\include\;$(ProjectDir)vendor\;$(YAMLCPP_INCLUDE)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>versus-framework.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)versus-framework\bin\$(Platform.ToLower())\$(Configuration.ToLower())\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>versus-framework.lib;yaml-cppd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)versus-framework\bin\$(Platform.ToLower())\$(Configuration.ToLower())\;$(YAMLCPP_LIB32)</AdditionalLibraryDirectories>
     </Link>
     <PreBuildEvent>
       <Command>xcopy /y /d  "$(SDL2_LIB32)\SDL2.dll" "$(TargetDir)"
@@ -117,15 +117,15 @@ xcopy /y /d /s "$(ProjectDir)assets\out" "$(TargetDir)"</Command>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)versus-framework\include\;$(ProjectDir)vendor\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)versus-framework\include\;$(ProjectDir)vendor\;$(YAMLCPP_INCLUDE)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>versus-framework.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)versus-framework\bin\$(Platform.ToLower())\$(Configuration.ToLower())\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>versus-framework.lib;yaml-cpp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)versus-framework\bin\$(Platform.ToLower())\$(Configuration.ToLower())\;$(YAMLCPP_LIB32)</AdditionalLibraryDirectories>
     </Link>
     <PreBuildEvent>
       <Command>xcopy /y /d  "$(SDL2_LIB32)\SDL2.dll" "$(TargetDir)"
@@ -138,13 +138,13 @@ xcopy /y /d /s "$(ProjectDir)assets\out" "$(TargetDir)"</Command>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)versus-framework\include\;$(ProjectDir)vendor\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)versus-framework\include\;$(ProjectDir)vendor\;$(YAMLCPP_INCLUDE)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>versus-framework.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)versus-framework\bin\$(Platform.ToLower())\$(Configuration.ToLower())\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>versus-framework.lib;yaml-cppd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)versus-framework\bin\$(Platform.ToLower())\$(Configuration.ToLower())\;$(YAMLCPP_LIB64)</AdditionalLibraryDirectories>
     </Link>
     <PreBuildEvent>
       <Command>xcopy /y /d  "$(SDL2_LIB64)\SDL2.dll" "$(TargetDir)" 
@@ -159,15 +159,15 @@ xcopy /y /d /s "$(ProjectDir)assets\out" "$(TargetDir)"</Command>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)versus-framework\include\;$(ProjectDir)vendor\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)versus-framework\include\;$(ProjectDir)vendor\;$(YAMLCPP_INCLUDE)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>versus-framework.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)versus-framework\bin\$(Platform.ToLower())\$(Configuration.ToLower())\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>versus-framework.lib;yaml-cpp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)versus-framework\bin\$(Platform.ToLower())\$(Configuration.ToLower())\;$(YAMLCPP_LIB64)</AdditionalLibraryDirectories>
     </Link>
     <PreBuildEvent>
       <Command>xcopy /y /d  "$(SDL2_LIB64)\SDL2.dll" "$(TargetDir)" 
@@ -181,12 +181,6 @@ xcopy /y /d /s "$(ProjectDir)assets\out" "$(TargetDir)"</Command>
     <ProjectReference Include="..\versus-framework\versus-framework.vcxproj">
       <Project>{bf8fe89b-7e96-4572-b085-74e65536d7bc}</Project>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="vendor\cpptoml\cpptoml.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="vendor\cpptoml\cpptoml-license.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
