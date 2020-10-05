@@ -3,7 +3,7 @@
 
 __TODO: Use CMake or something similar__
  
-The Visual Studio solution expects the following enviroment variables to configured.
+The Visual Studio solution expects the following enviroment variables.
 
 `SDL2_INCLUDE` - SDL2 include folder path
 
