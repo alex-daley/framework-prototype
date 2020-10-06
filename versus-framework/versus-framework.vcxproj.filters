@@ -53,9 +53,6 @@
     <ClCompile Include="src\maths.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\graphics.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="vendor\stb\stb_image.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

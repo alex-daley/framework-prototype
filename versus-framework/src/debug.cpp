@@ -4,7 +4,7 @@
 
 namespace
 {
-    std::size_t calculateLength(const char* format, va_list args)
+    std::size_t calculate_length(const char* format, va_list args)
     {
         return std::vsnprintf(nullptr, 0, format, args);;
     }
@@ -25,7 +25,7 @@ namespace
 
     void log_internal(vsf::LogLevel level, const char* format, va_list args)
     {
-        std::size_t length = calculateLength(format, args) + 1;
+        std::size_t length = calculate_length(format, args) + 1;
         char* message = new char[length];
         std::vsnprintf(message, length, format, args);
         log_internal(level, message);
