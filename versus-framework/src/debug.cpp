@@ -14,11 +14,11 @@ namespace
         switch (level)
         {
             case vsf::LogLevel::Info:
-                std::printf("\u001B[32mINFO:\u001B[0m %s\n", message);
+                std::printf("INFO: %s\n", message);
                 break;
 
             case vsf::LogLevel::Error:
-                std::printf("\u001B[31mERROR:\u001B[0m %s\n", message);
+                std::printf("ERROR: %s\n", message);
                 break;
         }
     }
