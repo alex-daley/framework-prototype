@@ -1,5 +1,7 @@
 #include "vsf.h"
+#include "config.h"
 #include <memory>
+#include <chrono> 
 
 namespace 
 {
@@ -10,10 +12,7 @@ namespace
 
 int main() 
 {
-    vsf::Config config;
-    config.video.resolution_x = 1280;
-    config.video.resolution_y = 720;
-    config.video.use_vsync = true;
+    vsf::Config config = versus::config::load();
 
     if (!vsf::application::initialise(config)) 
     {
