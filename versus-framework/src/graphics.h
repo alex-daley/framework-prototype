@@ -2,9 +2,6 @@
 
 namespace vsf
 {
-    struct Resolution;
-    class ITexture;
-
     struct Resolution
     {
         int width;
