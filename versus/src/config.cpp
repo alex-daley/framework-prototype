@@ -39,6 +39,15 @@ namespace
         video["use_vsync"] = config.video.use_vsync;
         return root;
     }
+
+    void log_config(const vsf::Config& config)
+    {
+        LOG_INFO("Config: { title: %s, video: { resolution_x: %i, resolution_y: %i, use_vsync: %i } }",
+            config.title.c_str(),
+            config.video.resolution_x,
+            config.video.resolution_y,
+            config.video.use_vsync);
+    }
 }
 
 namespace versus
@@ -49,13 +58,7 @@ namespace versus
         {
             YAML::Node file = YAML::LoadFile(FILENAME);
             vsf::Config config = deserialise(file);
-
-            LOG_INFO("Loaded config: { title: %s, video: { resolution_x: %i, resolution_y: %i, use_vsync: %i } }", 
-                config.title.c_str(), 
-                config.video.resolution_x, 
-                config.video.resolution_y,
-                config.video.use_vsync);
-
+            log_config(config);
             return config;
         }
         catch (const YAML::Exception& exception)
@@ -75,5 +78,6 @@ namespace versus
         stream << serialise(config);
 
         LOG_INFO("Saved config");
+        log_config(config);
     }
 }
