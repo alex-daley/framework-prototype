@@ -3,19 +3,6 @@
 
 namespace vsf 
 {
-    struct VideoConfig;
-    struct Config;
-
-    struct UpdateTime;
-    struct UpdateHooks;
-    
-    namespace application 
-    {
-        bool initialise(const Config& config);
-        void run(UpdateHooks hooks);
-        void shutdown();
-    }
-
     struct VideoConfig 
     {
         int resolution_x;
@@ -40,4 +27,11 @@ namespace vsf
     {
         void (*update)(const UpdateTime&);
     };
+
+    namespace application
+    {
+        bool initialise(const Config& config);
+        void run(UpdateHooks hooks);
+        void shutdown();
+    }
 }
