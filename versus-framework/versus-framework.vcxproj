@@ -184,6 +184,7 @@
     <ClCompile Include="src\application.cpp" />
     <ClCompile Include="src\asset_manager.cpp" />
     <ClCompile Include="src\debug.cpp" />
+    <ClCompile Include="src\graphics.cpp" />
     <ClCompile Include="src\maths.cpp" />
     <ClCompile Include="src\platform_sdl.cpp" />
     <ClCompile Include="vendor\stb\stb_image.cpp" />
