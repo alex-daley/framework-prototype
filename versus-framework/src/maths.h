@@ -16,6 +16,20 @@ namespace vsf
         float max_y;
     };
 
+    struct RectInt
+    {
+        RectInt(int min_x, int min_y, int max_x, int max_y);
+        RectInt();
+
+        int width() const;
+        int height() const;
+
+        int min_x;
+        int min_y;
+        int max_x;
+        int max_y;
+    };
+
     struct Vector2
     {
         Vector2(float x, float y);

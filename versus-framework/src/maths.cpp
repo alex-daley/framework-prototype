@@ -26,6 +26,28 @@ namespace vsf
         return max_y - min_y;
     }
 
+    RectInt::RectInt(int min_x, int min_y, int max_x, int max_y) :
+        min_x(min_x),
+        min_y(min_y),
+        max_x(max_x),
+        max_y(max_y)
+    {
+    }
+    
+    RectInt::RectInt() : RectInt(0, 0, 0, 0)
+    {
+    }
+    
+    int RectInt::width() const
+    {
+        return max_x - min_x;
+    }
+    
+    int RectInt::height() const
+    {
+        return max_y - min_y;
+    }
+
     Vector2::Vector2(float x, float y) : x(x), y(y)
     {
     }
