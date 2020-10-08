@@ -296,17 +296,19 @@ namespace vsf
 
     void platform::run(UpdateHooks hooks) 
     {
-        auto is_running = true;
-        UpdateTime time{0};
+        static Uint64 start = SDL_GetPerformanceCounter();
+        static Uint64 frequency = SDL_GetPerformanceFrequency();
+        static UpdateTime time{ 0 };
 
+        static bool is_running = true;
         while (is_running)
         {
-            static int start_ticks = SDL_GetTicks();
-            int ticks = SDL_GetTicks();
+            static auto frame_start = SDL_GetPerformanceCounter();
+            auto now = SDL_GetPerformanceCounter();
             time.update_count++;
-            time.time = ticks / 1000.0f;
-            time.delta_time = (ticks - start_ticks) / 1000.0f;
-            start_ticks = ticks;
+            time.time = ((float)(now - start)) / frequency;
+            time.delta_time = ((now - frame_start) * 1000.0f) / frequency;
+            frame_start = now;
 
             poll_and_handle_events(is_running);
 

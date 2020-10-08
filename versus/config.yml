@@ -1,0 +1,5 @@
+title: Versus
+video:
+  resolution_x: 1280
+  resolution_y: 720
+  use_vsync: true
