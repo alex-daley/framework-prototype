@@ -27,4 +27,11 @@ namespace vsf
         RectInt texture_rect;
         Vector2 position;
     };
+
+    class ISpriteBatch
+    {
+    public:
+        virtual ~ISpriteBatch() {}
+        virtual void draw(const Sprite& sprite) = 0;
+    };
 }

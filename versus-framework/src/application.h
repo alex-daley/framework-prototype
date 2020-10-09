@@ -1,4 +1,5 @@
 #pragma once
+#include "graphics.h"
 #include <string>
 
 namespace vsf 
@@ -26,6 +27,7 @@ namespace vsf
     struct UpdateHooks 
     {
         void (*update)(const UpdateTime&);
+        void (*draw)(ISpriteBatch&);
     };
 
     namespace application

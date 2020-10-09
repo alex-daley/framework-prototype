@@ -6,6 +6,10 @@ namespace
     void update(const vsf::UpdateTime& time)
     {
     }
+
+    void draw(vsf::ISpriteBatch& batch)
+    {
+    }
 }
 
 int main() 
@@ -22,6 +26,7 @@ int main()
     
     vsf::UpdateHooks hooks;
     hooks.update = update;
+    hooks.draw = draw;
     vsf::application::run(hooks);
 
     asset_manager.reset();

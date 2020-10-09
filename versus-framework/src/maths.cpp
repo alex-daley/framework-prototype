@@ -1,8 +1,14 @@
 #pragma once
 #include "maths.h"
+#include <cmath>
 
 namespace vsf
 {
+    int maths::round_to_int(float value)
+    {
+        return static_cast<int>(std::round(value));
+    }
+
     Rect::Rect(float min_x, float min_y, float max_x, float max_y) :
         min_x(min_x),
         min_y(min_y), 
@@ -56,3 +62,4 @@ namespace vsf
     {
     }
 }
+

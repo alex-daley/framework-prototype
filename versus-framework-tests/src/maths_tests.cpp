@@ -1,6 +1,20 @@
 #include "vsf.h"
 #include "catch2/catch.hpp"
 
+TEST_CASE("math::round_to_int rounds up correctly", "[maths]")
+{
+    constexpr auto EXPECTED = 1;
+    auto result = vsf::maths::round_to_int(0.5f);
+    REQUIRE(result == EXPECTED);
+}
+
+TEST_CASE("math::round_to_int rounds down correctly", "[maths]")
+{
+    constexpr auto EXPECTED = 0;
+    auto result = vsf::maths::round_to_int(0.499f);
+    REQUIRE(result == EXPECTED);
+}
+
 TEST_CASE("Rect::width correctly calculates width", "[maths]") 
 {
     constexpr auto EXPECTED_WIDTH = 50.23f;

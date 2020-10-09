@@ -2,6 +2,11 @@
 
 namespace vsf
 {
+    namespace maths
+    {
+        int round_to_int(float value);
+    }
+
     struct Rect
     {
         Rect(float min_x, float min_y, float max_x, float max_y);

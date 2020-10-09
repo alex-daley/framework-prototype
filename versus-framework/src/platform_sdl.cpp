@@ -4,6 +4,7 @@
 #include "stb/stb_image.h"
 #include <SDL.h>
 #include <unordered_map>
+#include <vector>
 
 namespace
 {
@@ -28,6 +29,12 @@ namespace
 
     private:
         vsf::Resolution resolution;
+    };
+
+    class SpriteBatchImplSDL final : public vsf::ISpriteBatch
+    {
+    public:
+        void draw(const vsf::Sprite& sprite) override;
     };
 
     void log_sdl_version()
@@ -178,6 +185,8 @@ namespace
             return nullptr;
         }
 
+        SDL_RenderSetLogicalSize(renderer, 320, 180);
+
         LOG_INFO("Created renderer %p with window %p", renderer, window);
         return renderer;
     }
@@ -250,6 +259,22 @@ namespace
         return { width, height };
     }
 
+    SDL_Texture* get_sdl_texture(const vsf::ITexture& texture)
+    {
+        auto impl = reinterpret_cast<const TextureImplSDL*>(&texture);
+        return impl->sdl_texture;
+    }
+
+    SDL_Rect to_sdl_rect(const vsf::RectInt& rect)
+    {
+        SDL_Rect sdl_rect;
+        sdl_rect.x = rect.min_x;
+        sdl_rect.y = rect.min_x;
+        sdl_rect.w = rect.width();
+        sdl_rect.h = rect.height();
+        return sdl_rect;
+    }
+
     TextureImplSDL::TextureImplSDL(SDL_Texture* sdl_texture, int width, int height) :
         sdl_texture(sdl_texture),
         resolution({ width, height })
@@ -264,6 +289,20 @@ namespace
     vsf::Resolution TextureImplSDL::get_resolution() const
     {
         return resolution;
+    }
+
+    void SpriteBatchImplSDL::draw(const vsf::Sprite& sprite)
+    {
+        SDL_Texture* texture = get_sdl_texture(sprite.texture);
+        SDL_Rect source = to_sdl_rect(sprite.texture_rect);
+        
+        SDL_Rect destination;
+        destination.x = vsf::maths::round_to_int((sprite.position.x - source.w) / 2.0f);
+        destination.y = vsf::maths::round_to_int((sprite.position.y - source.h) / 2.0f);
+        destination.w = source.w;
+        destination.h = source.h;
+
+        SDL_RenderCopy(renderer, texture, &source, &destination);
     }
 }
 
@@ -300,6 +339,8 @@ namespace vsf
         static Uint64 frequency = SDL_GetPerformanceFrequency();
         static UpdateTime time{ 0 };
 
+        static SpriteBatchImplSDL sprite_batch;
+
         static bool is_running = true;
         while (is_running)
         {
@@ -314,8 +355,10 @@ namespace vsf
 
             if (is_running)
             {
-                render_begin(renderer);
                 hooks.update(time);
+
+                render_begin(renderer);
+                hooks.draw(sprite_batch);
                 render_present(renderer);
             }
         }
