@@ -3,12 +3,15 @@
 
 namespace 
 {
+    std::unique_ptr<vsf::Sprite> player;
+
     void update(const vsf::UpdateTime& time)
     {
     }
 
     void draw(vsf::ISpriteBatch& batch)
     {
+        batch.draw(*player);
     }
 }
 
@@ -23,7 +26,10 @@ int main()
 
     auto asset_manager = std::make_unique<vsf::AssetManager>();
     asset_manager->preload();
-    
+
+    vsf::ITexture& texture = asset_manager->load_texture("images/player-placeholder.png");
+    player = std::make_unique<vsf::Sprite>(texture, vsf::RectInt(0, 0, 16, 16), vsf::Vector2(16, 16));
+
     vsf::UpdateHooks hooks;
     hooks.update = update;
     hooks.draw = draw;
