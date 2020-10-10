@@ -2,6 +2,7 @@
 #include "platform.h"
 #include "debug.h"
 
+#include <algorithm>
 // Requires C++17
 #include <filesystem>
 
@@ -38,19 +39,29 @@ namespace
 
 namespace vsf
 {
+    AssetManager::AssetManager(const std::string& root_path) : root_path(root_path)
+    {
+    }
+    
+    AssetManager::AssetManager() : AssetManager(".")
+    {
+    }
+
     ITexture& AssetManager::load_texture(const std::string& name)
     {
-        if (!contains(textures, name))
+        std::string key = make_asset_key(name);
+
+        if (!contains(textures, key))
         {
-            textures[name] = platform::load_texture(name);
+            textures[key] = platform::load_texture(name);
         }
 
         return *textures[name];
     }
 
-    void AssetManager::preload(const std::string& folder)
+    void AssetManager::preload()
     {
-        for (auto& entry : std::filesystem::recursive_directory_iterator(folder))
+        for (auto& entry : std::filesystem::recursive_directory_iterator(root_path))
         {
             auto path = entry.path();
 
@@ -65,8 +76,20 @@ namespace vsf
         }
     }
 
-    void AssetManager::preload()
+    std::string AssetManager::make_asset_key(const std::string& path) const
     {
-        preload(".");
+        // Force Unix style path separators.
+        std::string key = path;
+        std::replace(key.begin(), key.end(), '\\', '/');
+
+
+        // Remove the root_path and its following separator.
+        size_t pos = path.find(root_path);
+        if (pos == 0)
+        {
+            key.erase(pos, root_path.length() + 1);
+        }
+
+        return key;
     }
 }

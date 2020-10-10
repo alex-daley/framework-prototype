@@ -15,17 +15,20 @@ namespace vsf
     class AssetManager
     {
     public:
+        AssetManager(const std::string& root_path);
+        AssetManager();
+
         // Lazy loads a texture by name.
         ITexture& load_texture(const std::string& name);
-
-        // Preload assets from a specific folder.
-        void preload(const std::string& folder);
 
         // Preload assets.
         void preload();
 
 
     private:
+        std::string make_asset_key(const std::string& path) const;
+
+        std::string root_path;
         TextureMap textures;
     };
 }
