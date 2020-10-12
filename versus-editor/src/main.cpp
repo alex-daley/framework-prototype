@@ -24,8 +24,7 @@ namespace
 
 int main() 
 {
-    auto config = load_config();
-
+    const auto config = load_config();
     if (!vsf::application::initialise(*config))
     {
         return -1;
@@ -34,8 +33,9 @@ int main()
     vsf::UpdateHooks hooks;
     hooks.update = update;
     hooks.draw = draw;
-
     vsf::application::run(hooks);
+
+    vsf::application::shutdown();
 
     return 0;
 }
