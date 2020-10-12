@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30517.126
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "versus", "versus\versus.vcxproj", "{1E80A8D5-C3FD-4CDF-AD24-C93FD0D6E4FB}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "versus-framework", "versus-framework\versus-framework.vcxproj", "{BF8FE89B-7E96-4572-B085-74E65536D7BC}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "versus-framework-tests", "versus-framework-tests\versus-framework-tests.vcxproj", "{613897FD-E8CD-4AE8-9DD9-DC95009BAF02}"
@@ -22,14 +20,6 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{1E80A8D5-C3FD-4CDF-AD24-C93FD0D6E4FB}.Debug|x64.ActiveCfg = Debug|x64
-		{1E80A8D5-C3FD-4CDF-AD24-C93FD0D6E4FB}.Debug|x64.Build.0 = Debug|x64
-		{1E80A8D5-C3FD-4CDF-AD24-C93FD0D6E4FB}.Debug|x86.ActiveCfg = Debug|Win32
-		{1E80A8D5-C3FD-4CDF-AD24-C93FD0D6E4FB}.Debug|x86.Build.0 = Debug|Win32
-		{1E80A8D5-C3FD-4CDF-AD24-C93FD0D6E4FB}.Release|x64.ActiveCfg = Release|x64
-		{1E80A8D5-C3FD-4CDF-AD24-C93FD0D6E4FB}.Release|x64.Build.0 = Release|x64
-		{1E80A8D5-C3FD-4CDF-AD24-C93FD0D6E4FB}.Release|x86.ActiveCfg = Release|Win32
-		{1E80A8D5-C3FD-4CDF-AD24-C93FD0D6E4FB}.Release|x86.Build.0 = Release|Win32
 		{BF8FE89B-7E96-4572-B085-74E65536D7BC}.Debug|x64.ActiveCfg = Debug|x64
 		{BF8FE89B-7E96-4572-B085-74E65536D7BC}.Debug|x64.Build.0 = Debug|x64
 		{BF8FE89B-7E96-4572-B085-74E65536D7BC}.Debug|x86.ActiveCfg = Debug|Win32
