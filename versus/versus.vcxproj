@@ -175,6 +175,7 @@ xcopy /y /d /s "$(ProjectDir)assets\out" "$(TargetDir)"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\animation.cpp" />
     <ClCompile Include="src\config.cpp" />
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
@@ -184,6 +185,7 @@ xcopy /y /d /s "$(ProjectDir)assets\out" "$(TargetDir)"</Command>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\animation.h" />
     <ClInclude Include="src\config.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

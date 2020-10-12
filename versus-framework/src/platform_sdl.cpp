@@ -269,7 +269,7 @@ namespace
     {
         SDL_Rect sdl_rect;
         sdl_rect.x = rect.min_x;
-        sdl_rect.y = rect.min_x;
+        sdl_rect.y = rect.min_y;
         sdl_rect.w = rect.width();
         sdl_rect.h = rect.height();
         return sdl_rect;
