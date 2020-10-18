@@ -1,21 +1,38 @@
 #include "platform.h"
 #include "debug.h"
 #include "graphics.h"
+
 #include "stb/stb_image.h"
+#include "stb/stb_truetype.h"
+
 #include <SDL.h>
+
 #include <unordered_map>
 #include <vector>
 
 namespace
 {
-
     constexpr Uint32 INIT_FLAGS = SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_GAMECONTROLLER;
     SDL_Window* window;
     SDL_Renderer* renderer;
-    
+
     typedef std::unordered_map<SDL_JoystickID, SDL_GameController*> ControllerMap;
     constexpr int MAX_CONTROLERS = 8;
     ControllerMap controllers(MAX_CONTROLERS);
+    
+    struct Font;
+    // ASCII has 127 characters but we don't care about the first 32.
+    constexpr int FIRST_FONT_CHAR = 32; 
+    constexpr int MAX_FONT_CHARS = 127 - FIRST_FONT_CHAR;
+    Font* standard_font;
+
+    struct Font
+    {
+        stbtt_fontinfo info;
+        stbtt_packedchar chars[MAX_FONT_CHARS];
+        SDL_Texture* atlas;
+    };
+
 
     class TextureImplSDL final : public vsf::ITexture
     {
@@ -251,6 +268,167 @@ namespace
         LOG_INFO("Destroyed texture %p", texture);
     }
 
+    SDL_Texture* make_font_atlas(unsigned char* bitmap, size_t texture_width, size_t texture_height)
+    {
+        const size_t texture_size = texture_width * texture_height;
+        SDL_Texture* atlas = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_STATIC, texture_width, texture_height);
+        if (!atlas)
+        {
+            LOG_ERROR("Failed to create font altas: %s", SDL_GetError());
+            return nullptr;
+        }
+
+        auto pixels = new Uint32[texture_size];
+        static SDL_PixelFormat* format = SDL_AllocFormat(SDL_PIXELFORMAT_RGBA32);
+        for (size_t i = 0; i < texture_size; i++)
+        {
+            pixels[i] = SDL_MapRGBA(format, 255, 255, 255, bitmap[i]);
+        }
+
+        SDL_UpdateTexture(atlas, nullptr, pixels, texture_width * sizeof(Uint32));
+        SDL_SetTextureBlendMode(atlas, SDL_BLENDMODE_BLEND);
+        delete[] pixels;
+
+        LOG_INFO("Created font atlas %p (%ix%i)", atlas, texture_width, texture_height);
+        return atlas;
+    }
+
+    unsigned char* pack_chars_and_make_bitmap(stbtt_packedchar* chars, unsigned char* file_data, size_t width, size_t height, float font_size)
+    {
+        const size_t size = width * height;
+        auto bitmap = new unsigned char[size];
+        stbtt_pack_context pack_context;
+        stbtt_PackBegin(&pack_context, bitmap, width, height, 0, 1, 0);
+
+        if (!stbtt_PackFontRange(&pack_context, file_data, 0, font_size, FIRST_FONT_CHAR, MAX_FONT_CHARS, chars))
+        {
+            delete[] bitmap;
+            stbtt_PackEnd(&pack_context);
+            return nullptr;
+        }
+
+        stbtt_PackEnd(&pack_context);
+        return bitmap;
+    }
+
+    unsigned char* read_binary_file(const char* path)
+    {
+        constexpr auto READ_BINARY = "rb";
+        SDL_RWops* stream = SDL_RWFromFile(path, READ_BINARY);
+        if (!stream)
+        {
+            LOG_ERROR("Failed to open binary file: %s", SDL_GetError());
+            return nullptr;
+        }
+
+        size_t file_size = static_cast<size_t>(SDL_RWsize(stream));
+        unsigned char* file_data = new unsigned char[file_size];
+        if (!SDL_RWread(stream, file_data, file_size, 1))
+        {
+            LOG_ERROR("Failed to read binary file: %s", SDL_GetError());
+            delete[] file_data;
+            SDL_RWclose(stream);
+            return nullptr;
+        }
+
+        SDL_RWclose(stream);
+        
+        return file_data;
+    }
+
+    bool read_font_info(unsigned char* ttf_data, stbtt_fontinfo* info)
+    {
+        if (!stbtt_InitFont(info, ttf_data, 0))
+        {
+            LOG_ERROR("Failed to read font data %s");
+            return false;
+        }
+
+        return true;
+    }
+
+    Font* load_font(SDL_Renderer* renderer, const char* path, int font_size)
+    {
+        unsigned char* ttf_data = read_binary_file(path);
+        if (!ttf_data)
+        {
+            return nullptr;
+        }
+
+        Font* font = new Font();
+        if (!read_font_info(ttf_data, &font->info))
+        {
+            delete font;
+            return nullptr;
+        }
+
+        size_t bitmap_w = 32;
+        size_t bitmap_h = 32;
+        unsigned char* bitmap = nullptr;        
+
+        while (!bitmap)
+        {
+            bitmap = pack_chars_and_make_bitmap(font->chars, ttf_data, bitmap_w, bitmap_h, (float)font_size);
+            if (!bitmap)
+            {
+                bitmap_w += 32;
+                bitmap_h += 32;
+            }
+        }
+
+        delete[] ttf_data;
+
+        font->atlas = make_font_atlas(bitmap, bitmap_w, bitmap_h);
+        delete[] bitmap;
+        
+        LOG_INFO("Created font %p from %s", font, path);
+        
+        return font;
+    }
+
+    void free_font(Font* font)
+    {
+        SDL_DestroyTexture(font->atlas);
+        LOG_INFO("Destroyed font atlas %p", font->atlas);
+
+        Font* to_print = font;
+        delete font;
+        LOG_INFO("Destroyed font %p", to_print);
+        font = nullptr;
+    }
+
+    SDL_Rect get_font_source_rect(const stbtt_packedchar& info)
+    {
+        SDL_Rect rect;
+        rect.x = info.x0;
+        rect.y = info.y0;
+        rect.w = info.x1 - rect.x;
+        rect.h = info.y1 - rect.y;
+        return rect;
+    }
+
+    SDL_Rect get_font_destination_rect(const stbtt_packedchar& info, SDL_Point position)
+    {
+        SDL_Rect rect;
+        rect.x = vsf::maths::round_to_int(position.x + info.xoff);
+        rect.y = vsf::maths::round_to_int(position.y + info.yoff);
+        rect.w = info.x1 - info.x0;
+        rect.h = info.y1 - info.y0;
+        return rect;
+    }
+
+    void draw_text(SDL_Renderer* renderer, Font* font, float x, float y, const char* text)
+    {
+        for (int i = 0; text[i]; i++)
+        {
+            stbtt_packedchar* info = &font->chars[text[i] - FIRST_FONT_CHAR];
+            SDL_Rect source = get_font_source_rect(*info);
+            SDL_Rect destination = get_font_destination_rect(*info, { (int)x, (int)y });
+            SDL_RenderCopy(renderer, font->atlas, &source, &destination);
+            x += info->xadvance;
+        }
+    }
+
     SDL_Point get_texture_size(SDL_Texture* texture)
     {
         int width = 0;
@@ -330,6 +508,15 @@ namespace vsf
             return false;
         }
 
+        standard_font = load_font(renderer, config.typography.font_path.c_str(), config.typography.font_size);
+        if (!standard_font)
+        {
+            free_renderer(renderer);
+            free_window(window);
+            shutdown_sdl();
+            return false;
+        }
+
         return true;
     }
 
@@ -358,6 +545,9 @@ namespace vsf
                 hooks.update(time);
 
                 render_begin(renderer);
+                SDL_RenderSetLogicalSize(renderer, 1280, 720);
+                draw_text(renderer, standard_font, 50.0f, 50.0f, "A quick brown fox jumps over the lazy dog.");
+                SDL_RenderSetLogicalSize(renderer, 320, 180);
                 hooks.draw(sprite_batch);
                 render_present(renderer);
             }
@@ -366,6 +556,7 @@ namespace vsf
 
     void platform::shutdown() 
     {
+        free_font(standard_font);
         free_controllers(controllers);
         free_renderer(renderer);
         free_window(window);

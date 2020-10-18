@@ -11,10 +11,17 @@ namespace vsf
         bool use_vsync;
     };
 
+    struct TypographyConfig
+    {
+        std::string font_path;
+        int font_size;
+    };
+
     struct Config 
     {
         std::string title;
         VideoConfig video{};
+        TypographyConfig typography{};
     };
 
     struct UpdateTime

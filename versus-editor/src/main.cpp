@@ -10,6 +10,8 @@ namespace
         config->video.resolution_x = 1280;
         config->video.resolution_y = 720;
         config->video.use_vsync = true;
+        config->typography.font_path = "C:/Windows/Fonts/Arial.ttf";
+        config->typography.font_size = 18;
         return config;
     }
 

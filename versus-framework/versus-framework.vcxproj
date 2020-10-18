@@ -179,6 +179,7 @@
     <ClInclude Include="src\maths.h" />
     <ClInclude Include="src\platform.h" />
     <ClInclude Include="vendor\stb\stb_image.h" />
+    <ClInclude Include="vendor\stb\stb_truetype.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\application.cpp" />
@@ -188,6 +189,7 @@
     <ClCompile Include="src\maths.cpp" />
     <ClCompile Include="src\platform_sdl.cpp" />
     <ClCompile Include="vendor\stb\stb_image.cpp" />
+    <ClCompile Include="vendor\stb\stb_truetype.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
