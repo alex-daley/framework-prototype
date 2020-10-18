@@ -496,6 +496,21 @@ namespace
     {
         draw_text(renderer, standard_font, 100, 100, text.c_str());
     }
+
+    void draw_sprites(vsf::UpdateHooks& hooks, vsf::ISpriteBatch& batch)
+    {
+        SDL_RenderSetLogicalSize(renderer, LOGICAL_RESOLUTION_X, LOGICAL_RESOLUTION_Y);
+        hooks.draw(batch);
+    }
+
+    void draw_gui(vsf::UpdateHooks& hooks, vsf::IGuiBatch& batch)
+    {
+        int output_size_x = 0;
+        int output_size_y = 0;
+        SDL_GetRendererOutputSize(renderer, &output_size_x, &output_size_y);
+        SDL_RenderSetLogicalSize(renderer, output_size_x, output_size_y);
+        hooks.draw_gui(batch);
+    }
 }
 
 namespace vsf 
@@ -534,11 +549,6 @@ namespace vsf
         return true;
     }
 
-    void draw_sprites()
-    {
-
-    }
-
     void platform::run(UpdateHooks hooks) 
     {
         static Uint64 start = SDL_GetPerformanceCounter();
@@ -562,22 +572,11 @@ namespace vsf
 
             if (is_running)
             {
-                // TODO: Tidy up.
-                // TODO: Benchmark.
-
                 hooks.update(time);
 
                 render_begin(renderer);
-                
-                SDL_RenderSetLogicalSize(renderer, LOGICAL_RESOLUTION_X, LOGICAL_RESOLUTION_Y);
-                hooks.draw(sprite_batch);
-                
-                int output_size_x = 0;
-                int output_size_y = 0;
-                SDL_GetRendererOutputSize(renderer, &output_size_x, &output_size_y);
-                SDL_RenderSetLogicalSize(renderer, output_size_x, output_size_y);
-                hooks.draw_gui(gui_batch);
-                
+                draw_sprites(hooks, sprite_batch);
+                draw_gui(hooks, gui_batch);
                 render_present(renderer);
             }
         }
