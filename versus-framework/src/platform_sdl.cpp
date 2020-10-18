@@ -13,6 +13,9 @@
 namespace
 {
     constexpr Uint32 INIT_FLAGS = SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_GAMECONTROLLER;
+    constexpr int LOGICAL_RESOLUTION_X = 320;
+    constexpr int LOGICAL_RESOLUTION_Y = 180;
+
     SDL_Window* window;
     SDL_Renderer* renderer;
 
@@ -52,6 +55,12 @@ namespace
     {
     public:
         void draw(const vsf::Sprite& sprite) override;
+    };
+
+    class GuiBatchImplSDL final : public vsf::IGuiBatch
+    {
+    public:
+        void label(const std::string& text) override;
     };
 
     void log_sdl_version()
@@ -202,7 +211,7 @@ namespace
             return nullptr;
         }
 
-        SDL_RenderSetLogicalSize(renderer, 320, 180);
+        SDL_RenderSetLogicalSize(renderer, LOGICAL_RESOLUTION_X, LOGICAL_RESOLUTION_Y);
 
         LOG_INFO("Created renderer %p with window %p", renderer, window);
         return renderer;
@@ -482,6 +491,11 @@ namespace
 
         SDL_RenderCopy(renderer, texture, &source, &destination);
     }
+
+    void GuiBatchImplSDL::label(const std::string& text)
+    {
+        draw_text(renderer, standard_font, 100, 100, text.c_str());
+    }
 }
 
 namespace vsf 
@@ -520,12 +534,18 @@ namespace vsf
         return true;
     }
 
+    void draw_sprites()
+    {
+
+    }
+
     void platform::run(UpdateHooks hooks) 
     {
         static Uint64 start = SDL_GetPerformanceCounter();
         static Uint64 frequency = SDL_GetPerformanceFrequency();
         static UpdateTime time{ 0 };
 
+        static GuiBatchImplSDL gui_batch;
         static SpriteBatchImplSDL sprite_batch;
 
         static bool is_running = true;
@@ -542,13 +562,22 @@ namespace vsf
 
             if (is_running)
             {
+                // TODO: Tidy up.
+                // TODO: Benchmark.
+
                 hooks.update(time);
 
                 render_begin(renderer);
-                SDL_RenderSetLogicalSize(renderer, 1280, 720);
-                draw_text(renderer, standard_font, 50.0f, 50.0f, "A quick brown fox jumps over the lazy dog.");
-                SDL_RenderSetLogicalSize(renderer, 320, 180);
+                
+                SDL_RenderSetLogicalSize(renderer, LOGICAL_RESOLUTION_X, LOGICAL_RESOLUTION_Y);
                 hooks.draw(sprite_batch);
+                
+                int output_size_x = 0;
+                int output_size_y = 0;
+                SDL_GetRendererOutputSize(renderer, &output_size_x, &output_size_y);
+                SDL_RenderSetLogicalSize(renderer, output_size_x, output_size_y);
+                hooks.draw_gui(gui_batch);
+                
                 render_present(renderer);
             }
         }

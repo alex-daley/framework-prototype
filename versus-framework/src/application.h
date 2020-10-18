@@ -35,6 +35,7 @@ namespace vsf
     {
         void (*update)(const UpdateTime&);
         void (*draw)(ISpriteBatch&);
+        void (*draw_gui)(IGuiBatch&);
     };
 
     namespace application

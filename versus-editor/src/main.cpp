@@ -22,6 +22,11 @@ namespace
     void draw(vsf::ISpriteBatch& batch)
     {
     }
+
+    void draw_gui(vsf::IGuiBatch& batch)
+    {
+        batch.label("A quick brown fox jumps over the lazy dog.");
+    }
 }
 
 int main() 
@@ -35,6 +40,7 @@ int main()
     vsf::UpdateHooks hooks;
     hooks.update = update;
     hooks.draw = draw;
+    hooks.draw_gui = draw_gui;
     vsf::application::run(hooks);
 
     vsf::application::shutdown();

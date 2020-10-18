@@ -1,5 +1,7 @@
 #pragma once
 #include "maths.h"
+#include <string>
+#include <cstdint>
 
 namespace vsf
 {
@@ -7,6 +9,17 @@ namespace vsf
     {
         int width;
         int height;
+    };
+
+    struct Colour
+    {
+        Colour(std::uint8_t r, std::uint8_t g, std::uint8_t b, std::uint8_t a);
+        Colour();
+
+        std::uint8_t r;
+        std::uint8_t g;
+        std::uint8_t b;
+        std::uint8_t a;
     };
 
     class ITexture
@@ -33,5 +46,12 @@ namespace vsf
     public:
         virtual ~ISpriteBatch() {}
         virtual void draw(const Sprite& sprite) = 0;
+    };
+
+    class IGuiBatch
+    {
+    public:
+        virtual ~IGuiBatch() {}
+        virtual void label(const std::string& text) = 0;
     };
 }

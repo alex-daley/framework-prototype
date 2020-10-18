@@ -11,6 +11,14 @@ namespace
 
 namespace vsf
 {
+    Colour::Colour(std::uint8_t r, std::uint8_t g, std::uint8_t b, std::uint8_t a) 
+        : r(r), g(g), b(b), a(a)
+    {
+    }
+    Colour::Colour() : r(0), g(0), b(0), a(0)
+    {
+    }
+
     Sprite::Sprite(ITexture& texture, const RectInt& texture_rect, Vector2 position) :
         texture(texture),
         texture_rect(texture_rect),
