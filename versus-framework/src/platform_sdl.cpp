@@ -34,8 +34,8 @@ namespace
         stbtt_fontinfo info;
         stbtt_packedchar chars[MAX_FONT_CHARS];
         SDL_Texture* atlas;
+        int baseline;
     };
-
 
     class TextureImplSDL final : public vsf::ITexture
     {
@@ -345,13 +345,18 @@ namespace
         return file_data;
     }
 
-    bool read_font_info(unsigned char* ttf_data, stbtt_fontinfo* info)
+    bool read_font_info(unsigned char* ttf_data, float font_size, stbtt_fontinfo* out_info, int* out_baseline)
     {
-        if (!stbtt_InitFont(info, ttf_data, 0))
+        if (!stbtt_InitFont(out_info, ttf_data, 0))
         {
             LOG_ERROR("Failed to read font data %s");
             return false;
         }
+
+        float scale = stbtt_ScaleForPixelHeight(out_info, font_size);
+        int ascent, decent;
+        stbtt_GetFontVMetrics(out_info, &ascent, &decent, 0);
+        *out_baseline = (int)(ascent * scale);
 
         return true;
     }
@@ -365,7 +370,7 @@ namespace
         }
 
         Font* font = new Font();
-        if (!read_font_info(ttf_data, &font->info))
+        if (!read_font_info(ttf_data, (float)font_size , &font->info, &font->baseline))
         {
             delete font;
             return nullptr;
@@ -428,6 +433,8 @@ namespace
 
     void draw_text(SDL_Renderer* renderer, Font* font, float x, float y, const char* text)
     {
+        y += font->baseline;
+
         for (int i = 0; text[i]; i++)
         {
             stbtt_packedchar* info = &font->chars[text[i] - FIRST_FONT_CHAR];
@@ -494,7 +501,7 @@ namespace
 
     void GuiBatchImplSDL::label(const std::string& text)
     {
-        draw_text(renderer, standard_font, 100, 100, text.c_str());
+        draw_text(renderer, standard_font, 0, 0, text.c_str());
     }
 
     void draw_sprites(vsf::UpdateHooks& hooks, vsf::ISpriteBatch& batch)
