@@ -52,6 +52,8 @@ namespace vsf
     {
     public:
         virtual ~IGuiBatch() {}
+        virtual void panel(Vector2 position, int padding = 16) = 0;
+        virtual void panel_commit() = 0;
         virtual void label(const std::string& text) = 0;
     };
 }

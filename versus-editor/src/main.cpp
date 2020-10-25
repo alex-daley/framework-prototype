@@ -25,7 +25,10 @@ namespace
 
     void draw_gui(vsf::IGuiBatch& batch)
     {
+        batch.panel(vsf::Vector2(32, 32));
         batch.label("A quick brown fox jumps over the lazy dog.");
+        batch.label("A quick brown fox jumps over the lazy dog again.");
+        batch.panel_commit();
     }
 }
 

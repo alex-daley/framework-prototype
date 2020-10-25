@@ -29,12 +29,18 @@ namespace
     constexpr int MAX_FONT_CHARS = 127 - FIRST_FONT_CHAR;
     Font* standard_font;
 
+    struct FontMetrics
+    {
+        int baseline;
+        int height;
+    };
+
     struct Font
     {
         stbtt_fontinfo info;
         stbtt_packedchar chars[MAX_FONT_CHARS];
         SDL_Texture* atlas;
-        int baseline;
+        FontMetrics metrics;
     };
 
     class TextureImplSDL final : public vsf::ITexture
@@ -60,7 +66,13 @@ namespace
     class GuiBatchImplSDL final : public vsf::IGuiBatch
     {
     public:
+        void panel(vsf::Vector2 position, int padding) override;
+        void panel_commit() override;
         void label(const std::string& text) override;
+
+    private:
+        vsf::RectInt container;
+        int padding;
     };
 
     void log_sdl_version()
@@ -345,7 +357,7 @@ namespace
         return file_data;
     }
 
-    bool read_font_info(unsigned char* ttf_data, float font_size, stbtt_fontinfo* out_info, int* out_baseline)
+    bool read_font_info(unsigned char* ttf_data, float font_size, stbtt_fontinfo* out_info, FontMetrics* out_metrics)
     {
         if (!stbtt_InitFont(out_info, ttf_data, 0))
         {
@@ -353,10 +365,12 @@ namespace
             return false;
         }
 
-        float scale = stbtt_ScaleForPixelHeight(out_info, font_size);
+        const float scale = stbtt_ScaleForPixelHeight(out_info, font_size);
         int ascent, decent;
         stbtt_GetFontVMetrics(out_info, &ascent, &decent, 0);
-        *out_baseline = (int)(ascent * scale);
+
+        out_metrics->baseline = vsf::maths::round_to_int(ascent * scale);
+        out_metrics->height = vsf::maths::round_to_int((ascent - decent) * scale);
 
         return true;
     }
@@ -370,7 +384,7 @@ namespace
         }
 
         Font* font = new Font();
-        if (!read_font_info(ttf_data, (float)font_size , &font->info, &font->baseline))
+        if (!read_font_info(ttf_data, (float)font_size , &font->info, &font->metrics))
         {
             delete font;
             return nullptr;
@@ -431,18 +445,35 @@ namespace
         return rect;
     }
 
+    stbtt_packedchar* get_packedchar(Font* font, const char* text, int char_index)
+    {
+        return &font->chars[text[char_index] - FIRST_FONT_CHAR];
+    }
+
     void draw_text(SDL_Renderer* renderer, Font* font, float x, float y, const char* text)
     {
-        y += font->baseline;
+        y += font->metrics.baseline;
 
         for (int i = 0; text[i]; i++)
         {
-            stbtt_packedchar* info = &font->chars[text[i] - FIRST_FONT_CHAR];
+            stbtt_packedchar* info = get_packedchar(font, text, i);
             SDL_Rect source = get_font_source_rect(*info);
             SDL_Rect destination = get_font_destination_rect(*info, { (int)x, (int)y });
             SDL_RenderCopy(renderer, font->atlas, &source, &destination);
             x += info->xadvance;
         }
+    }
+
+    float get_text_width(Font* font, const char* text)
+    {
+        float width = 0.0f;
+        for (int i = 0; text[i]; i++)
+        {
+            stbtt_packedchar* info = get_packedchar(font, text, i);
+            width += info->xadvance;
+        }
+
+        return width;
     }
 
     SDL_Point get_texture_size(SDL_Texture* texture)
@@ -499,9 +530,35 @@ namespace
         SDL_RenderCopy(renderer, texture, &source, &destination);
     }
 
+    void GuiBatchImplSDL::panel(vsf::Vector2 position, int padding)
+    {
+        const int x = vsf::maths::round_to_int(position.x);
+        const int y = vsf::maths::round_to_int(position.y);
+        container = vsf::RectInt(x, y, x, y);
+        this->padding = padding;
+    }
+
+    void GuiBatchImplSDL::panel_commit()
+    {
+        SDL_Rect rect = to_sdl_rect(container);
+        rect.x -= padding;
+        rect.y -= padding;
+        rect.w += padding * 2;
+        rect.h += padding * 2;
+
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+        SDL_RenderDrawRect(renderer, &rect);
+
+        container = {};
+    }
+
     void GuiBatchImplSDL::label(const std::string& text)
     {
-        draw_text(renderer, standard_font, 0, 0, text.c_str());
+        draw_text(renderer, standard_font, (float)container.min_x, (float)container.max_y, text.c_str());
+
+        const float width = get_text_width(standard_font, text.c_str());
+        container.max_x = std::max(container.max_x, container.min_x + vsf::maths::round_to_int(width));
+        container.max_y += standard_font->metrics.height;
     }
 
     void draw_sprites(vsf::UpdateHooks& hooks, vsf::ISpriteBatch& batch)
