@@ -69,6 +69,7 @@ namespace
         void panel(vsf::Vector2 position, int padding) override;
         void panel_commit() override;
         void label(const std::string& text) override;
+        bool button(const std::string& text) override;
 
     private:
         vsf::RectInt container;
@@ -206,6 +207,14 @@ namespace
         }
     }
 
+    SDL_Point get_mouse_position()
+    {
+        int x = 0;
+        int y = 0;
+        SDL_GetMouseState(&x, &y);
+        return { x, y };
+    }
+
     SDL_Renderer* create_renderer(SDL_Window* window, bool use_vsync)
     {
         constexpr int FIRST_VIABLE_DRIVER = -1;
@@ -224,6 +233,7 @@ namespace
         }
 
         SDL_RenderSetLogicalSize(renderer, LOGICAL_RESOLUTION_X, LOGICAL_RESOLUTION_Y);
+        SDL_SetRenderDrawBlendMode(renderer, SDL_BlendMode::SDL_BLENDMODE_BLEND);
 
         LOG_INFO("Created renderer %p with window %p", renderer, window);
         return renderer;
@@ -235,11 +245,23 @@ namespace
         LOG_INFO("Destroyed renderer %p and associated textures", renderer);
     }
 
+    vsf::Colour get_renderer_colour(SDL_Renderer* renderer)
+    {
+        Uint8 r, g, b, a;
+        SDL_GetRenderDrawColor(renderer, &r, &g, &b, &a);
+        return vsf::Colour(r, g, b, a);
+    }
+
+    void set_renderer_colour(SDL_Renderer* renderer, const vsf::Colour& colour)
+    {
+        SDL_SetRenderDrawColor(renderer, colour.r, colour.g, colour.b, colour.a);
+    }
+
     void render_begin(SDL_Renderer* renderer)
     {
-        // Cornflower blue.
-        SDL_SetRenderDrawColor(renderer, 100, 149, 237, 255);
+        set_renderer_colour(renderer, vsf::Colour(100, 150, 240, 255));
         SDL_RenderClear(renderer);
+        set_renderer_colour(renderer, vsf::Colour(255, 255, 255, 255));
     }
 
     void render_present(SDL_Renderer* renderer)
@@ -452,6 +474,10 @@ namespace
 
     void draw_text(SDL_Renderer* renderer, Font* font, float x, float y, const char* text)
     {
+        Uint8 r, g, b, a;
+        SDL_GetRenderDrawColor(renderer, &r, &g, &b, &a);
+        SDL_SetTextureColorMod(font->atlas, r, g, b);
+
         y += font->metrics.baseline;
 
         for (int i = 0; text[i]; i++)
@@ -500,6 +526,13 @@ namespace
         return sdl_rect;
     }
 
+    bool rect_contains(const SDL_Rect& rect, SDL_Point point)
+    {
+        return
+            point.x > rect.x && point.x < rect.x + rect.w &&
+            point.y > rect.y && point.y < rect.y + rect.h;
+    }
+
     TextureImplSDL::TextureImplSDL(SDL_Texture* sdl_texture, int width, int height) :
         sdl_texture(sdl_texture),
         resolution({ width, height })
@@ -545,8 +578,6 @@ namespace
         rect.y -= padding;
         rect.w += padding * 2;
         rect.h += padding * 2;
-
-        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
         SDL_RenderDrawRect(renderer, &rect);
 
         container = {};
@@ -559,6 +590,30 @@ namespace
         const float width = get_text_width(standard_font, text.c_str());
         container.max_x = std::max(container.max_x, container.min_x + vsf::maths::round_to_int(width));
         container.max_y += standard_font->metrics.height;
+    }
+
+    bool GuiBatchImplSDL::button(const std::string& text)
+    {
+        SDL_Rect rect;
+        rect.x = container.min_x;
+        rect.y = container.max_y;
+        rect.w = get_text_width(standard_font, text.c_str());
+        rect.h = standard_font->metrics.height;
+        
+        
+        if (rect_contains(rect, get_mouse_position()))
+        {
+            const vsf::Colour prior_colour = get_renderer_colour(renderer);
+            set_renderer_colour(renderer, vsf::Colour(255, 0, 0, 255));
+            label(text);
+            set_renderer_colour(renderer, prior_colour);
+        }
+        else
+        {
+            label(text);
+        }
+
+        return false;
     }
 
     void draw_sprites(vsf::UpdateHooks& hooks, vsf::ISpriteBatch& batch)

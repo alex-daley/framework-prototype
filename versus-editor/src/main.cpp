@@ -28,6 +28,11 @@ namespace
         batch.panel(vsf::Vector2(32, 32));
         batch.label("A quick brown fox jumps over the lazy dog.");
         batch.label("A quick brown fox jumps over the lazy dog again.");
+        
+        if (batch.button("Click me!"))
+        {
+        }
+
         batch.panel_commit();
     }
 }
