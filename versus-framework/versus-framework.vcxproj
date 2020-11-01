@@ -96,7 +96,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SDL2_INCLUDE);$(ProjectDir)vendor\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SDL2_INCLUDE);$(ProjectDir)vendor\;$(ProjectDir)src\;$(ProjectDir)src\platform</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -116,7 +116,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SDL2_INCLUDE);$(ProjectDir)vendor\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SDL2_INCLUDE);$(ProjectDir)vendor\;$(ProjectDir)src\;$(ProjectDir)src\platform</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -136,7 +136,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SDL2_INCLUDE);$(ProjectDir)vendor\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SDL2_INCLUDE);$(ProjectDir)vendor\;$(ProjectDir)src\;$(ProjectDir)src\platform</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -156,7 +156,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SDL2_INCLUDE);$(ProjectDir)vendor\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SDL2_INCLUDE);$(ProjectDir)vendor\;$(ProjectDir)src\;$(ProjectDir)src\platform</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -177,7 +177,7 @@
     <ClInclude Include="src\debug.h" />
     <ClInclude Include="src\graphics.h" />
     <ClInclude Include="src\maths.h" />
-    <ClInclude Include="src\platform.h" />
+    <ClInclude Include="src\platform\platform.h" />
     <ClInclude Include="vendor\stb\stb_image.h" />
     <ClInclude Include="vendor\stb\stb_truetype.h" />
   </ItemGroup>
@@ -187,7 +187,7 @@
     <ClCompile Include="src\debug.cpp" />
     <ClCompile Include="src\graphics.cpp" />
     <ClCompile Include="src\maths.cpp" />
-    <ClCompile Include="src\platform_sdl.cpp" />
+    <ClCompile Include="src\platform\platform_sdl.cpp" />
     <ClCompile Include="vendor\stb\stb_image.cpp" />
     <ClCompile Include="vendor\stb\stb_truetype.cpp" />
   </ItemGroup>
